@@ -1,4 +1,6 @@
-genes <- read.table('Body/1_Raw/gencode.v25.annotation.gtf.Genes.Shet.pLI.FIS.RVIS.GHIS.KnKs.GC.BrainSpecificRanking.Branch', header = 1)
+rm(list=ls(all=TRUE))
+
+genes <- read.table('../../Body/1_Raw/gencode.v25.annotation.gtf.Genes.Shet.pLI.FIS.RVIS.GHIS.KnKs.GC.BrainSpecificRanking.Branch', header = 1)
 
 HSP_id <- 'ENSG00000096384'
 
