@@ -4,21 +4,24 @@ genes <- read.table('../../Body/1_Raw/gencode.v25.annotation.gtf.Genes.Shet.pLI.
 
 HSP_id <- 'ENSG00000096384'
 
-HSP <- genes[genes$EnsemblId == HSP_id,]
+genes_num_cols <- genes[, -c(3,4,5,7, 18)] #18 столбец - это "BrainSpecificRanking", убираем его так какау HSP90 там нет начения
 
-HSP_like_genes = genes[(genes$Branch == 0) & ((49.1 - 49.1*0.05) < genes$GcContent) & (genes$GcContent < (49.1+49.1*0.05)) &
-                         (genes$KnKsMouse > (0.002403525 - 0.002403525*0.05)) & (genes$KnKsMouse < (0.002403525 + 0.002403525*0.05)),]
+nas <- summary(genes_num_cols)[7,] #очень много пропущенных наченией в скорах
+genes_without_na <- na.omit(genes_num_cols) #остается 2435 генов из 58037 
+genes_pca <- prcomp(genes_without_na[,-c(1,2)], scale. = T)
+#plot(genes_pca)
 
+pdf('../../Body/4_Figures/pca_HSP_like_genes.pdf')
+biplot(genes_pca, pc.biplot = F, col = c('white', 'black'), cex = 0.7, main = 'PCA HSP like genes')
+dev.off()
 
-HSP_like_genes <-  genes[(genes$Branch == 0),]
-HSP_like_genes <- HSP_like_genes[complete.cases(HSP_like_genes[ , c(16,17, 19)]),]
+PC1 <- predict(genes_pca)[,1]
+genes_labels <- genes_without_na[,c(1,2)]
 
-GC_content_HSP <- HSP$GcContent
-HSP_like_genes <-  HSP_like_genes[((GC_content_HSP - GC_content_HSP*0.05) < HSP_like_genes$GcContent) & 
-                                    ((GC_content_HSP + GC_content_HSP*0.05) > HSP_like_genes$GcContent),]
+genes_PC1 <- data.frame(genes_labels, PC1)
+PC1_HSP <- genes_PC1[genes_PC1$EnsemblId == HSP_id, 3]
+#PC1 у HSP90 равна 2.646849, как теперь отобрать белки с бликим начением PC1
 
-KnKs_HSP = HSP$KnKsMouse
-HSP_like_genes <- HSP_like_genes[(HSP_like_genes$KnKsMouse > (KnKs_HSP - KnKs_HSP*0.05)),]
-HSP_like_genes <- HSP_like_genes[(HSP_like_genes$KnKsMouse < (KnKs_HSP + KnKs_HSP*0.05)),] #остается 2 гена
-
-
+genes_PC1$PC1 <- genes_PC1$PC1 - PC1_HSP #чтобы можно было все начения сравнивать с нулем
+hist(genes_PC1$PC1)
+HSP_like_genes <- genes_PC1[genes_PC1$PC1 >= -0.15 & genes_PC1$PC1 <= 0.15, ] #остается 261 ген, нужно больше или достаточно? 
