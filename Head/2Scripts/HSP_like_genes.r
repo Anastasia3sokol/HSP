@@ -16,8 +16,8 @@ genes_pca <- prcomp(genes_without_na[,-c(1,2)], scale. = T)
 #plot(genes_pca)
 
 pdf('../../Body/4_Figures/pca_HSP_like_genes.pdf')
-biplot(genes_pca, choices = 1:2, pc.biplot = F, col = c('white', 'black'), cex = 0.7, main = 'PCA HSP like genes') # очень клевая картинка!!!!
-biplot(genes_pca, choices = 2:3, pc.biplot = F, col = c('white', 'black'), cex = 0.7, main = 'PCA HSP like genes')
+biplot(genes_pca, choices = 1:2, pc.biplot = F, col = c('white', 'black'), cex = 0.6, main = 'PCA HSP like genes', xlim = c(-0.08,0.08)) # очень клевая картинка!!!!
+biplot(genes_pca, choices = 2:3, pc.biplot = F, col = c('white', 'black'), cex = 0.6, main = 'PCA HSP like genes', xlim = c(-0.08,0.08))
 dev.off()
 
 PC1 <- predict(genes_pca)[,1]
