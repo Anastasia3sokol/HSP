@@ -30,6 +30,12 @@ HspPc2 <- genes_PC[genes_PC$EnsemblId == HSP_id, 4]
 # PC1 у HSP90 равна 2.646849, PC2 у HSP90 равна 1.017779. Как теперь отобрать белки с бликим начением PC1 и PC2. 
 # надо найти 300 генов - которые в маленьком кружке с центром - Hsp90 и в идеале проранжировать их по степени схожести (надо повторить геометрию - расстояние между точками...)
 
-genes_PC1$PC1 <- genes_PC1$PC1 - PC1_HSP #чтобы можно было все начения сравнивать с нулем
-hist(genes_PC1$PC1)
-HSP_like_genes <- genes_PC1[genes_PC1$PC1 >= -0.15 & genes_PC1$PC1 <= 0.15, ] #остается 261 ген, нужно больше или достаточно? 
+genes_PC$distance_to_hsp <- sqrt((HspPc1-genes_PC$PC1)**2 + (HspPc2-genes_PC$PC2)**2)
+genes_like_hsp <- genes_PC[order(genes_PC$distance_to_hsp),][1:300,]
+
+pdf('../../Body/4_Figures/HSP_like_genes_subset.pdf')
+par(mfcol = c(1,1))
+plot(genes_PC$PC1, genes_PC$PC2, col = 'darkslategray3', xlab = 'PC1', ylab = 'PC2', main = 'Subset of genes similar to HSP90', asp = 1)
+points(genes_like_hsp$PC1, genes_like_hsp$PC2, col = 'red')
+dev.off()
+
