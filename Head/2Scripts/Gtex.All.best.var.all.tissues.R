@@ -27,5 +27,5 @@ All_best_var$cis_eQTL_id <- paste(All_best_var$variant_id, All_best_var$gene_id,
 All_best_var$Assessed_Allele_Freq <- rep(0, dim(All_best_var)[1])  
 All_best_var[All_best_var$ref_factor == 1,]$Assessed_Allele_Freq <- All_best_var[All_best_var$ref_factor == 1,]$maf
 All_best_var[All_best_var$ref_factor == -1,]$Assessed_Allele_Freq <- 1 - All_best_var[All_best_var$ref_factor == -1,]$maf
-
-write.table(All_best_var, file = '../../Body/2_Derived/All.best.vat.all.tissue.variants.outside.genes.txt')
+All_best_var <- All_best_var[,c('cis_eQTL_id', 'Assessed_Allele_Freq', 'slope', 'Tissue')]
+write.table(All_best_var, file = '../../Body/2_Derived/All.best.vat.all.tissue.variants.outside.genes.important.columns.txt')
