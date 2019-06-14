@@ -31,13 +31,15 @@ HspPc2 <- genes_PC[genes_PC$EnsemblId == HSP_id, 4]
 # надо найти 300 генов - которые в маленьком кружке с центром - Hsp90 и в идеале проранжировать их по степени схожести (надо повторить геометрию - расстояние между точками...)
 
 genes_PC$distance_to_hsp <- sqrt((HspPc1-genes_PC$PC1)**2 + (HspPc2-genes_PC$PC2)**2)
-genes_like_hsp <- genes_PC[order(genes_PC$distance_to_hsp),][1:300,-c('PC1', 'PC2')]
+genes_like_hsp <- genes_PC[order(genes_PC$distance_to_hsp),][1:300,]
 write.table(genes_like_hsp, '../../Body/2_Derived/genes.ranged.by.distance.to.hsp.txt')
+
 
 
 pdf('../../Body/4_Figures/HSP_like_genes_subset.pdf')
 par(mfcol = c(1,1))
 plot(genes_PC$PC1, genes_PC$PC2, col = 'darkslategray3', xlab = 'PC1', ylab = 'PC2', main = 'Subset of genes similar to HSP90', asp = 1)
 points(genes_like_hsp$PC1, genes_like_hsp$PC2, col = 'red')
+points(genes_like_hsp[genes_like_hsp$EnsemblId == HSP_id,'PC1'], genes_like_hsp[genes_like_hsp$EnsemblId == HSP_id,'PC2'], col = 'black', pch = '*')
+legend(x = 2, y = 11, legend = c('All genes', 'Subset of genes closed \n to hsp90', 'hsp90'), col = c('darkslategray3', 'red', 'black'), pch = c('o', 'o', '*'))
 dev.off()
-
