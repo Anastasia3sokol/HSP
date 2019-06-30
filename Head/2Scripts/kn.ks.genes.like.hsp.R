@@ -11,4 +11,21 @@ for (file in tables) {
   whole_table <- merge(whole_table, table, by = 'Species', all = T)
 }
 
+
+glenght_table <- read.table('../../Body/2_Derived/GenerationLenghtforMammals.csv', sep = ',', header = T)
+#glenght_table <- glenght_table[, c('Scientific_name', 'Calculated_GL_d')]
+Species <- gsub('\\)', '',gsub('^([a-z]|[A-Z]|\ |-|\'|[0-9])*\\(', '', whole_table$Species))
+library(stringr)
+whole_table$Species <- word(Species, 1, 2)
+
+whole_table$Generation_Length <- NA
+
+for (species in whole_table$Species){
+    if (species %in% glenght_table$Scientific_name){
+       whole_table[whole_table$Species == species,'Generation_Length'] <-  glenght_table[glenght_table$Scientific_name == species, 'GenerationLength_d']
+    } 
+  }
+whole_table <- whole_table[!is.na(whole_table$Generation_Length),]
+
+
 write.table(whole_table, '../../Body/2_Derived/kn.ks.genes.like.hsp.txt')
