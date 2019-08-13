@@ -75,9 +75,10 @@ title('Slopes of linear regression \"Kn/Ks\" ~ \"generation length\"\n for genes
 legend(x = 250, y = 0.0063, legend = 'hsp90', col = 'red', pch = 19)
 dev.off() 
 
-
+pdf('../../Body/4_Figures/hsp.like.genes.intercept.vs.slopes.pdf')
 plot(df$intercept, df$slopes)
 points(df[df$genes == 'dN.dS_ENSG00000096384','intercept'],df[df$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
+dev.off()
 
 pdf('../../Body/4_Figures/HSP_like_genes_histogram_slopes.pdf')
 par(mfcol = c(1,1))
