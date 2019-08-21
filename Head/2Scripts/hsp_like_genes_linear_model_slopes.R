@@ -50,38 +50,26 @@ results <- data.frame(genes, slopes, intercept, p_val_slope, p_val_intercept, nu
 write.table(results, '../../Body/3_Results/linear.regression.kn.ks.vs.generation.length.hsp.like.genes.mammals.txt'            )
 
 
-df <- read.table('../../Body/3_Results/linear.regression.kn.ks.vs.generation.length.hsp.like.genes.mammals.txt')
+results <- read.table('../../Body/3_Results/linear.regression.kn.ks.vs.generation.length.hsp.like.genes.mammals.txt')
+
+pdf('../../Body/4_Figures/hsp.like.genes.linear.model.pdf')
+boxplot(results[results$p_val_slope < 0.05,'slopes'], ylab = 'slope')
+points(results[results$genes == 'dN.dS_ENSG00000096384', 'slopes'], col = 'red', pch = 19)
+title('Slopes of linear regression \"Kn/Ks\" ~ \"generation length\"\n for genes closed to hsp90 (red)\n n=155')
+legend(x = 50, y = 0.005,legend = 'hsp90', col = 'red', pch = 19)
 
 
-pdf('../../Body/4_Figures/HSP_like_genes_slopes.pdf')
-par(mfcol = c(2,1))
-plot(slopes)
-points(results[results$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-boxplot(slopes)
-points(results[results$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-dev.off()
+boxplot(results[results$p_val_intercept < 0.05,'intercept'], ylab = 'intercept')
+points(results[results$genes == 'dN.dS_ENSG00000096384', 'intercept'], col = 'red', pch = 19)
+title('Inercepts of linear regression \"Kn/Ks\" ~ \"generation length\"\n for genes closed to hsp90 (red)\n n=292')
+legend(x = 10, y = 35, legend = 'hsp90', col = 'red', pch = 19)
 
-pdf('../../Body/4_Figures/boxplot_slopes.pdf')
-boxplot(df$slopes)
-points(df[df$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-title('Slopes of linear regression \'Kn/Ks\' ~ \'generation length\'\n for genes close to hsp90')
-legend(x = 1.35, y = 0.0055, legend = 'hsp90', col = 'red', pch = 19)
-dev.off()
 
-pdf('../../Body/4_Figures/scatters_slopes.pdf')
-plot(df$slopes, xlab = 'gene index', ylab = 'slope')
-points(df[df$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-title('Slopes of linear regression \"Kn/Ks\" ~ \"generation length\"\n for genes close to hsp90')
-legend(x = 250, y = 0.0063, legend = 'hsp90', col = 'red', pch = 19)
-dev.off() 
 
-pdf('../../Body/4_Figures/hsp.like.genes.intercept.vs.slopes.pdf')
-plot(df$intercept, df$slopes)
-points(df[df$genes == 'dN.dS_ENSG00000096384','intercept'],df[df$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-dev.off()
-
-pdf('../../Body/4_Figures/HSP_like_genes_histogram_slopes.pdf')
-par(mfcol = c(1,1))
-hist(slopes)
+plot(results[(results$p_val_intercept < 0.05) & (results$p_val_slope < 0.05),'intercept'], results[(results$p_val_slope < 0.05) & (results$p_val_intercept < 0.05),'slopes'],
+     xlab = 'intecept', ylab = 'slope')
+points(results[results$genes == 'dN.dS_ENSG00000096384','intercept'], results[results$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
+title('Slope vs intercept genes like hsp90, n = 154')     
+legend(x = 32, y = 0.0056, legend = 'hsp90', col = 'red', pch = 19)
 dev.off()
 
