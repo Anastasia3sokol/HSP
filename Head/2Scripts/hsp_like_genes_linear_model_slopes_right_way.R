@@ -15,7 +15,7 @@ ggplot(hsp90, aes(Generation_Length, dN.dS_ENSG00000096384))+
   geom_point(size = 2)+
   geom_smooth(method = 'lm')
 
-df_hsp90_sp <- df[df$Species %in% hsp90$Species,]
+df_hsp90_sp <- df[df$Species %in% hsp90$Species,] #to make linear model for other genes using more or less same speciaes as hsp90
 
 
 
@@ -66,12 +66,18 @@ for (gene in genes) {
   R_sq <- c(R_sq, sum$r.squared)
   R_sq_adj <- c(R_sq_adj, sum$adj.r.squared)
   residual_std_err <- c(residual_std_err, sum$sigma)
-  #df <- c(df, sum[7])
+  
 }
 
+
+#table with linear regression parameters
 results <- data.frame(genes, slopes, intercept, p_val_slope, p_val_intercept, number_of_species, R_sq, R_sq_adj, residual_std_err)
 
 write.table(results, '../../Body/3_Results/hsp.like.genes.linear.model.results.kn.ks.vs.generation.length.mammals.right.way.txt')
+
+
+
+###drawing plots
 results <- read.table('../../Body/3_Results/hsp.like.genes.linear.model.results.kn.ks.vs.generation.length.mammals.right.way.txt')
 
 
@@ -119,8 +125,18 @@ lines(x = c(0,1),y =c(0,0), col = 'blue')
 title('Slope vs intercept genes like hsp90, n = 50, p_value_slope < 0.01')     
 legend(x = 20, y = 0.0065, legend = 'hsp90', col = 'red', pch = 19)
 
+
+#do we need fiter significant p-val??
+plot(results[,'intercept'], results[,'slopes'],
+     xlab = 'intecept', ylab = 'slope')
+points(results[results$genes == 'dN.dS_ENSG00000096384','intercept'], results[results$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
+lines(x = c(0,100),y =c(0,0), col = 'blue')
+title('Slope vs intercept genes like hsp90, n = 177')     
+legend(x = 37, y = 0.0056, legend = 'hsp90', col = 'red', pch = 19)
+
 dev.off()
 
 
 
-cor.test(results[results$p_val_slope < 0.01,'intercept'], results[results$p_val_slope < 0.01,'slopes'])
+
+cor.test(results[,'intercept'], results[,'slopes']) #-0.8930672 
