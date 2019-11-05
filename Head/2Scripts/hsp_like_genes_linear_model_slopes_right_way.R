@@ -7,7 +7,7 @@ df[, -1] <- sapply(df[, -1], as.vector)
 df[, -1] <- sapply(df[, -1], as.numeric)
 
 hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
-hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~ hsp90$Generation_Length, data = hsp90)
+hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, data = hsp90)
 
 
 library('ggplot2')

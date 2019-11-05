@@ -85,6 +85,9 @@ legend(x = 1.3, y = 0.37, legend = 'hsp90', col = 'red', pch = 19)
 
 
 
+hsps  <- read.table('../../Body/2_Derived/human.hsp.ensID.group.txt', header = T, sep = '\t')
+hsps$Ensembl.gene.ID <- paste('dN.dS_', hsps$Ensembl.gene.ID, sep = '')
+results <- merge(x = results, y = hsps, by.x = 'genes', by.y = 'Ensembl.gene.ID')
 
 plot(results[,'intercept'], results[,'slopes'],
      xlab = 'intecept', ylab = 'slope')
@@ -93,6 +96,16 @@ title('Slope vs intercept all hsp genes\n n=73')
 legend(x = 0.35, y = 0.00015, legend = 'hsp90', col = 'red', pch = 19)
 
 
+library(ggplot2)
+library(wesanderson)
+theme_set(theme_bw())
+gg <- ggplot(results, aes(intercept, slopes))+
+  geom_point(aes(col = Group.name))+
+  xlab('intercept')+
+  ylab('slope')+
+  labs(title ='Slope vs intercept all hsp genes', subtitle = 'n=73')
+
+gg
 #######
 
 
