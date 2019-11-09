@@ -1,6 +1,6 @@
 rm(list = ls(all = T))
 
-tissue_num <- read.table('../../Body/2_Derived/Gtex.LOE.GOE.tissues.numbers.txt')
+tissue_num <- read.table('../../Body/2_Derived/Gtex.LOE.GOE.tissues.numbers.frec.more.5.perc.txt')
 gene <- gsub('.*b37_','', tissue_num$cis_eQTL_id)
 tissue_num <- cbind(tissue_num, gene)
 
@@ -66,8 +66,8 @@ write.table(df, '../../Body/2_Derived/Gtex.LOE.GOE.tissue.ciseQTL.numbers.per.ge
   
   boxplot(GOE_tissues/LOE_tissues)
   points(GOE_tissues[which(unique_genes == 'ENSG00000096384')]/LOE_tissues[which(unique_genes == 'ENSG00000096384')], col = 'red', pch = 19)
-  title('GOE/LOE tissue number')
-  legend(1.2, 16, legend = 'hsp90', col = 'red', pch = 19)
+  title('GOE/LOE tissue number\nAssesed allele frequency > 5%')
+  legend('topright', legend = 'hsp90', col = 'red', pch = 19)
   dev.off()
 
 

@@ -7,13 +7,58 @@ df[, -1] <- sapply(df[, -1], as.vector)
 df[, -1] <- sapply(df[, -1], as.numeric)
 
 hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
-hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, data = hsp90)
+hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~  hsp90$Generation_Length, data = hsp90)
+summary(hsp90_lm)
+#Call:
+#  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ hsp90$Generation_Length, data = hsp90)
 
+#Residuals:
+#  Min        1Q    Median        3Q       Max 
+#-0.034183 -0.012535 -0.008299 -0.004468  0.104734 
+
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)  
+#(Intercept)             5.100e-03  7.422e-03   0.687    0.496  
+#hsp90$Generation_Length 3.923e-06  1.956e-06   2.005    0.051 .
+#---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 0.02659 on 45 degrees of freedom
+#Multiple R-squared:  0.08201,	Adjusted R-squared:  0.06161 
+#F-statistic:  4.02 on 1 and 45 DF,  p-value: 0.051
+
+hsp90_lm1 <- lm(hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, data = hsp90)
+summary(hsp90_lm1)
+#Call:
+#  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, 
+#     data = hsp90)
+
+#Residuals:
+#  Min        1Q    Median        3Q       Max 
+#-0.039542 -0.011556 -0.005991 -0.000709  0.103559 
+
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)    
+#hsp90$Generation_Length 5.069e-06  1.017e-06   4.986  9.2e-06 ***
+#  ---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 0.02644 on 46 degrees of freedom
+#Multiple R-squared:  0.3509,	Adjusted R-squared:  0.3367 
+#F-statistic: 24.86 on 1 and 46 DF,  p-value: 9.205e-06
+
+plot(hsp90$Generation_Length, hsp90$dN.dS_ENSG00000096384, pch = 19, xlab = 'Generation Length, days', ylab = 'Kn/Ks')  
+abline(hsp90_lm$coefficients[1], hsp90_lm$coefficients[2])  
+abline(0, hsp90_lm1$coefficients[1], col = 'red') 
+legend(x = 6100, y = 0.13, col = c('black', 'red'), pch = c('-', '-'), legend = c('Kn/Ks ~ Generation Length', 'Kn/Ks ~ 0 + Generation Length'))
+title('')
 
 library('ggplot2')
 ggplot(hsp90, aes(Generation_Length, dN.dS_ENSG00000096384))+
   geom_point(size = 2)+
   geom_smooth(method = 'lm')
+
+
 
 df_hsp90_sp <- df[df$Species %in% hsp90$Species,] #to make linear model for other genes using more or less same speciaes as hsp90
 
@@ -130,13 +175,14 @@ legend(x = 20, y = 0.0065, legend = 'hsp90', col = 'red', pch = 19)
 plot(results[,'intercept'], results[,'slopes'],
      xlab = 'intecept', ylab = 'slope')
 points(results[results$genes == 'dN.dS_ENSG00000096384','intercept'], results[results$genes == 'dN.dS_ENSG00000096384','slopes'], col = 'red', pch = 19)
-lines(x = c(0,100),y =c(0,0), col = 'blue')
-title('Slope vs intercept genes like hsp90, n = 177')     
+abline(slint$coefficients[1], slint$coefficients[2])
+lines(x = c(0,100),y =c(0,0), col = 'blue', lty = 3)
+  title('Slope vs intercept genes like hsp90, n = 177')     
 legend(x = 37, y = 0.0056, legend = 'hsp90', col = 'red', pch = 19)
 
 dev.off()
 
 
 
-
+slint <- lm(results$slopes~results$intercept)
 cor.test(results[,'intercept'], results[,'slopes']) #-0.8930672 
