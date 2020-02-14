@@ -2,9 +2,54 @@ rm(list=ls(all=TRUE))
 
 
 All_best_var <- read.table('../../Body/2_Derived/All.best.vat.all.tissue.variants.outside.genes.important.columns.txt')
+All_best_var[,'genes'] <- gsub('[0-9, A-Z]+_[0-9]+_[A-Z]+_[A-Z]+_b37_', '', All_best_var$cis_eQTL_id)
+All_best_var['hsp90'] <- All_best_var$genes == 'ENSG00000096384'
+All_best_var['GOE_or_LOE'] <- All_best_var$slope > 0
+
+pdf('../../Body/4_Figures/Gtex.LOE.GOE.tissue.numbers.slopes.assessed.allele.freq.pdf')
+#for all genes
+boxplot(All_best_var$Assessed_Allele_Freq ~ All_best_var$hsp90, names = c('all genes', 'HSP90AB1'))
+title('Assesed Allele Frequency')
+
+
+boxplot(abs(All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'slope']) ~ 
+          All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'hsp90'] * 
+          All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'GOE_or_LOE'],
+        names = c('all genes LOE', 'HSP90AB1 LOE', 'all genes GOE', 'HSP90AB1 GOE'),
+        main = 'Slopes of cis-eQTLs')
+
+
+boxplot(All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'Assessed_Allele_Freq'] ~ 
+          All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'hsp90'] * 
+          All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'GOE_or_LOE'],
+        names = c('all genes LOE', 'HSP90AB1 LOE', 'all genes GOE', 'HSP90AB1 GOE'),
+        main = 'Assesed Allele Frequency of cis-eQTLs')
+
+
+#for genes like hsp90 from PCA
 
 genes.like.hsp <- as.vector(read.table('../../Body/2_Derived/hsp.like.genes.pca.genes.ranged.by.distance.to.hsp.txt')[1:300,1])
 All_best_var_genes_like_hsp <- All_best_var[grepl(paste(genes.like.hsp, collapse="|"), All_best_var$cis_eQTL_id),] #choose hsp-like genes only
+
+boxplot(All_best_var_genes_like_hsp$Assessed_Allele_Freq ~ All_best_var_genes_like_hsp$hsp90, names = c('hsp90 like genes', 'HSP90AB1'))
+title('Assesed Allele Frequency in genes like hsp90')
+
+
+boxplot(abs(All_best_var_genes_like_hsp[, 'slope']) ~ 
+          All_best_var_genes_like_hsp[, 'hsp90'] * 
+          All_best_var_genes_like_hsp[, 'GOE_or_LOE'],
+        names = c('hsp90 like genes LOE', 'HSP90AB1 LOE', 'hsp90 like genes GOE', 'HSP90AB1 GOE'),
+        main = 'Slopes of cis-eQTLs in genes like hsp90')
+
+
+boxplot(All_best_var_genes_like_hsp[, 'Assessed_Allele_Freq'] ~ 
+          All_best_var_genes_like_hsp[, 'hsp90'] * 
+          All_best_var_genes_like_hsp[, 'GOE_or_LOE'],
+        names = c('hsp90 like genes LOE', 'HSP90AB1 LOE', 'hsp90 like genes GOE', 'HSP90AB1 GOE'),
+        main = 'Assesed Allele Frequency of cis-eQTLs in genes like hsp90')
+
+
+
 All_best_var_genes_like_hsp_freq <- (All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$Assessed_Allele_Freq >= 0.05,])
 #look at hsp90
 All_best_var_hsp <- All_best_var_genes_like_hsp[grepl('ENSG00000096384', All_best_var_genes_like_hsp$cis_eQTL_id),]
@@ -19,7 +64,7 @@ hsp_GOE <- All_best_var_hsp[All_best_var_hsp$slope > 0, 'Assessed_Allele_Freq']
 
 x <- c(hsp_GOE, hsp_LOE)
 gp = c(rep("hsp90 GOE Assessed allele freq", length(hsp_GOE)),rep("hsp90 LOE Assessed allele freq",length(hsp_LOE)))
-boxplot(x ~ gp, xlab = '', ylab = 'Assesed allele frequency')
+boxplot(x ~ gp, xlab = '', ylab = 'Assesed allele frequency', mail = 'Assessed Allele Frequency HSP90AB1')
 
 
 t.test(hsp_GOE, hsp_LOE) #no difference p-value = 0.7528
@@ -27,6 +72,8 @@ LOE <- All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$slope < 0, 'Asses
 GOE <- All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$slope > 0, 'Assessed_Allele_Freq']
 boxplot(LOE, GOE, names=c('LOE', 'GOE'), ylab = 'Assesed allele frequency')
 title('cis-eQTL assesed allele frequency')
+
+dev.off()
 
 # count tissues in which each unique cis-eQTL is occured
 cis_eQTL_id <- as.array(unique(All_best_var_genes_like_hsp$cis_eQTL_id))

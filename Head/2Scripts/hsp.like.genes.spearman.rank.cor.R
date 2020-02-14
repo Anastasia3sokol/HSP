@@ -13,7 +13,7 @@ df_hsp90_sp <- df[df$Species %in% hsp90$Species,] #to make model for other genes
 
 cols <- colnames(df_hsp90_sp[,-c(1, 302)])
 for (c in cols) {
-  if (length(df_hsp90_sp[is.na(df_hsp90_sp[,c]),c]) >= 10){
+  if (length(df_hsp90_sp[is.na(df_hsp90_sp[,c]),c]) >= 15){
     df_hsp90_sp[,c] <- NULL
   }
   
@@ -21,7 +21,7 @@ for (c in cols) {
 }
 rows <- rownames(df_hsp90_sp)
 for (r in rows) {
-  if (length(df_hsp90_sp[r, is.na(df_hsp90_sp[r,])]) >= 10){
+  if (length(df_hsp90_sp[r, is.na(df_hsp90_sp[r,])]) >= 15){
     df_hsp90_sp <- df_hsp90_sp[-as.numeric(r),]
   }
 }
@@ -30,7 +30,7 @@ rho <- c()
 S <- c()
 p_val <- c()
 number_of_species <- c()
-genes <- colnames(df_hsp90_sp)[-c(1,179)]
+genes <- colnames(df_hsp90_sp)[-c(1,217)]
 
 
 
@@ -51,15 +51,15 @@ results <- data.frame(genes, S, rho, p_val, number_of_species)
 write.table(results, '../../Body/3_Results/hsp.like.genes.sperman.rank.cor.txt')
 
 
-pdf('../../Body/4_Figures/hsp.like.genes.spearman.rank.cor.pdf')
+pdf('../../Body/4_Figures/hsp.like.genes.spearman.rank.cor.less.15.sp.pdf')
 plot(~results$rho + results$p_val)
 points(results[results$genes=='dN.dS_ENSG00000096384', 'rho'], results[results$genes == 'dN.dS_ENSG00000096384', 'p_val'], col = 'red', pch = 19)
 legend('topright', legend = 'HSP90AB1', col = 'red', pch = 19)
-title('rank Spearman correlation for genes like HSP90AB1')
+title('rank Spearman correlation for genes like HSP90AB1, n = 215')
 
 
 boxplot(results$rho, ylab = 'Spearman\'s rho')
 points(results[results$genes=='dN.dS_ENSG00000096384', 'rho'], col = 'red', pch = 19)
 legend('topright', legend = 'HSP90AB1', col = 'red', pch = 19)
-title('rank Spearman correlation for genes like HSP90AB1')
+title('rank Spearman correlation for genes like HSP90AB1, n = 215')
 dev.off()
