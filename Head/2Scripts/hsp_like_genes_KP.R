@@ -53,16 +53,20 @@ points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Coeff,-log10(Final
 plot(FinalRes$Lm1Intercept,-log10(FinalRes$Lm1InterceptP), xlab = 'Lm1Intercept', ylab = 'Lm1InterceptP'); 
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Intercept,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1InterceptP), col = 'red', pch = 16, cex = 2);
 
+plot(FinalRes$Lm1Intercept,FinalRes$Lm1Coeff, xlab = 'Lm1Intercept', ylab = 'Lm1Coeff'); par(new=TRUE)
+points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Intercept,FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Coeff, col = 'red', pch = 16,  cex = 2);
+
 plot(FinalRes[FinalRes$Lm1InterceptP < 0.01 & FinalRes$Lm1CoeffP < 0.01,]$Lm1Intercept,FinalRes[FinalRes$Lm1InterceptP < 0.01 & FinalRes$Lm1CoeffP < 0.01,]$Lm1Coeff, xlab = 'Lm1Intercept', ylab = 'Lm1Coeff'); par(new=TRUE)
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Intercept,FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Coeff, col = 'red', pch = 16,  cex = 2);
 
 plot(FinalRes$Lm2Coeff,-log10(FinalRes$Lm2CoeffP), xlab = 'Lm2Coeff', ylab = 'Lm2CoeffP'); 
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm2Coeff,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1CoeffP), col = 'red', pch = 16, cex = 2);
+abline(h=-log10(0.05),col = 'red')
 
 plot(FinalRes$RankCorRho,-log10(FinalRes$RankCorP), xlab = 'RankCorRho', ylab = 'RankCorP'); 
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$RankCorRho,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$RankCorP), col = 'red', pch = 16, cex = 2);
 
-plot(FinalRes$Lm2CoeffP,FinalRes$CoeffOfVar, xlab = 'RankCorRho', ylab = 'RankCorP'); 
+plot(FinalRes$Lm2CoeffP,FinalRes$CoeffOfVar, xlab = 'Lm2CoeffP', ylab = 'CoeffOfVar'); 
 
 dev.off()
 
