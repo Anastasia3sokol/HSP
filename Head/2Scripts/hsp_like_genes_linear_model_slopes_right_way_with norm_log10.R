@@ -1,14 +1,17 @@
 rm(list=ls(all=TRUE))
 
-
 df <- read.table('../../Body/2_Derived/kn.ks.genes.like.hsp.txt')
 df[df == 'n/a'] <- NA
+names(df)
+str(df)
 df[, -1] <- sapply(df[, -1], as.vector)
 df[, -1] <- sapply(df[, -1], as.numeric)
+str(df)
 
 hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
 hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~  hsp90$Generation_Length, data = hsp90)
 summary(hsp90_lm)
+nrow(hsp90) # 47
 #Call:
 #  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ hsp90$Generation_Length, data = hsp90)
 
@@ -46,6 +49,9 @@ summary(hsp90_lm1)
 #Residual standard error: 0.02644 on 46 degrees of freedom
 #Multiple R-squared:  0.3509,	Adjusted R-squared:  0.3367 
 #F-statistic: 24.86 on 1 and 46 DF,  p-value: 9.205e-06
+
+hsp90_lm2 <- lm(scale(hsp90$dN.dS_ENSG00000096384) ~ 0 + scale(log2(hsp90$Generation_Length)), data = hsp90)
+summary(hsp90_lm2)
 
 plot(hsp90$Generation_Length, hsp90$dN.dS_ENSG00000096384, pch = 19, xlab = 'Generation Length, days', ylab = 'Kn/Ks')  
 abline(hsp90_lm$coefficients[1], hsp90_lm$coefficients[2])  
