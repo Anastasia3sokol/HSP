@@ -59,9 +59,22 @@ points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Intercept,FinalRes
 plot(FinalRes[FinalRes$Lm1InterceptP < 0.01 & FinalRes$Lm1CoeffP < 0.01,]$Lm1Intercept,FinalRes[FinalRes$Lm1InterceptP < 0.01 & FinalRes$Lm1CoeffP < 0.01,]$Lm1Coeff, xlab = 'Lm1Intercept', ylab = 'Lm1Coeff'); par(new=TRUE)
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Intercept,FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1Coeff, col = 'red', pch = 16,  cex = 2);
 
-plot(FinalRes$Lm2Coeff,-log10(FinalRes$Lm2CoeffP), xlab = 'Lm2Coeff', ylab = 'Lm2CoeffP'); 
+## Lm2 is our favourite model till now (through the origin with scaled X)
+plot(FinalRes$Lm2Coeff,-log10(FinalRes$Lm2CoeffP), xlab = 'Lm2Coeff', ylab = '-log10(Lm2CoeffP)'); 
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm2Coeff,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm1CoeffP), col = 'red', pch = 16, cex = 2);
 abline(h=-log10(0.05),col = 'red')
+
+### what about Nrow, CoeffOfVar and Pvalues from Lm2
+cor.test(FinalRes$Nrow,FinalRes$Lm2Coeff, method = 'spearman') # nothing
+cor.test(FinalRes$Nrow,FinalRes$Lm2CoeffP, method = 'spearman') # negative significant
+boxplot(FinalRes[FinalRes$Lm2CoeffP>=0.05,]$Nrow,FinalRes[FinalRes$Lm2CoeffP<0.05,]$Nrow,ylab='Nrow',names = c('Lm2CoeffP>=0.05','Lm2CoeffP<0.05'), notch = TRUE)
+
+plot(FinalRes$Nrow,-log10(FinalRes$Lm2CoeffP))
+points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Nrow,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Lm2CoeffP), col = 'red', pch = 16, cex = 2)
+cor.test(FinalRes$Nrow,FinalRes$CoeffOfVar, method = 'spearman') # very negative and very significant
+plot(FinalRes$Nrow,FinalRes$CoeffOfVar)
+points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$Nrow,FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$CoeffOfVar, col = 'red', pch = 16, cex = 2)
+
 
 plot(FinalRes$RankCorRho,-log10(FinalRes$RankCorP), xlab = 'RankCorRho', ylab = 'RankCorP'); 
 points(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$RankCorRho,-log10(FinalRes[FinalRes$Gene == "dN.dS_ENSG00000096384",]$RankCorP), col = 'red', pch = 16, cex = 2);
