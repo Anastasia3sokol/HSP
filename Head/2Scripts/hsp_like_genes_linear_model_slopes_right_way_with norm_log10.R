@@ -1,17 +1,14 @@
 rm(list=ls(all=TRUE))
 
+
 df <- read.table('../../Body/2_Derived/kn.ks.genes.like.hsp.txt')
 df[df == 'n/a'] <- NA
-names(df)
-str(df)
 df[, -1] <- sapply(df[, -1], as.vector)
 df[, -1] <- sapply(df[, -1], as.numeric)
-str(df)
 
 hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
 hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~  hsp90$Generation_Length, data = hsp90)
 summary(hsp90_lm)
-nrow(hsp90) # 47
 #Call:
 #  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ hsp90$Generation_Length, data = hsp90)
 
@@ -50,9 +47,6 @@ summary(hsp90_lm1)
 #Multiple R-squared:  0.3509,	Adjusted R-squared:  0.3367 
 #F-statistic: 24.86 on 1 and 46 DF,  p-value: 9.205e-06
 
-hsp90_lm2 <- lm(scale(hsp90$dN.dS_ENSG00000096384) ~ 0 + scale(log2(hsp90$Generation_Length)), data = hsp90)
-summary(hsp90_lm2)
-
 plot(hsp90$Generation_Length, hsp90$dN.dS_ENSG00000096384, pch = 19, xlab = 'Generation Length, days', ylab = 'Kn/Ks')  
 abline(hsp90_lm$coefficients[1], hsp90_lm$coefficients[2])  
 abline(0, hsp90_lm1$coefficients[1], col = 'red') 
@@ -89,8 +83,8 @@ for (r in rows) {
 #perform linear model
 slopes <- c()
 p_val_slope <- c()
-intercept <- c()
-p_val_intercept <- c()
+#intercept <- c()
+#p_val_intercept <- c()
 R_sq <- c()
 R_sq_adj <- c()
 number_of_species <- c()
@@ -105,16 +99,14 @@ for (gene in genes) {
   
   species <- a[,'Species']
   number_of_species <- c(number_of_species, length(species))
-  y <- log10(((a[,gene] - mean(a[,gene]))/sd(a[,gene]))+5)
-  x <- log10(((a[,'Generation_Length'] - mean(a[,'Generation_Length']))/sd(a[,'Generation_Length']))+5)
-  lg <- lm(y ~ x)
+  lg <- lm(scale(a[,'Generation_Length']) ~ 0 + scale(a[,gene]))
   sum <- summary(lg)
   b <- sum$coefficients
   
-  slopes <- c(slopes, b[2,1])
-  p_val_slope <- c(p_val_slope, b[2,4])
-  intercept <- c(intercept, b[1,1])
-  p_val_intercept <- c(p_val_intercept, b[1,4])
+  slopes <- c(slopes, b[1])
+  p_val_slope <- c(p_val_slope, b[4])
+  #intercept <- c(intercept, b[1,1])
+  #p_val_intercept <- c(p_val_intercept, b[1,4])
   R_sq <- c(R_sq, sum$r.squared)
   R_sq_adj <- c(R_sq_adj, sum$adj.r.squared)
   residual_std_err <- c(residual_std_err, sum$sigma)
@@ -123,7 +115,7 @@ for (gene in genes) {
 
 
 #table with linear regression parameters
-results <- data.frame(genes, slopes, intercept, p_val_slope, p_val_intercept, number_of_species, R_sq, R_sq_adj, residual_std_err)
+results <- data.frame(genes, slopes, p_val_slope,number_of_species, R_sq, R_sq_adj, residual_std_err)
 
 write.table(results, '../../Body/3_Results/hsp.like.genes.linear.model.results.kn.ks.vs.generation.length.mammals.right.way.with.norm.log10.txt')
 
@@ -133,7 +125,7 @@ write.table(results, '../../Body/3_Results/hsp.like.genes.linear.model.results.k
 results <- read.table('../../Body/3_Results/hsp.like.genes.linear.model.results.kn.ks.vs.generation.length.mammals.right.way.with.norm.log10.txt')
 
 
-pdf('../../Body/4_Figures/hsp.like.genes.linear.model.slopes.right.way.with.norm.log10.less.15.species.from.hsp.pdf')
+pdf('../../Body/4_Figures/hsp.like.genes.linear.model.slopes.right.way.with.scale.less.15.species.from.hsp.zerro.intercept.pdf')
 
 boxplot(results[,'slopes'], ylab = 'slope')
 points(results[results$genes == 'dN.dS_ENSG00000096384', 'slopes'], col = 'red', pch = 19)
@@ -146,6 +138,11 @@ points(results[results$genes == 'dN.dS_ENSG00000096384', 'intercept'], col = 're
 title('Inercepts of linear regression \"Kn/Ks\" ~ \"generation length\"\n for genes closed to hsp90 (red)\n n = 215')
 legend('topright', legend = 'HSP90AB1', col = 'red', pch = 19)
 
+plot(results[,'slopes'], results[,'p_val_slope'],
+     xlab = 'slope', ylab = 'p_val_slope')
+points(results[results$genes == 'dN.dS_ENSG00000096384','slopes'], results[results$genes == 'dN.dS_ENSG00000096384','p_val_slope'], col = 'red', pch = 19)
+title('Slope vs intercept genes like hsp90, n = 215')     
+legend('topright', legend = 'HSP90AB1', col = 'red', pch = 19)
 
 
 plot(results[,'intercept'], results[,'slopes'],
