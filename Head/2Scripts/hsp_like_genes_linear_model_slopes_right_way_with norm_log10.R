@@ -7,51 +7,85 @@ df[, -1] <- sapply(df[, -1], as.vector)
 df[, -1] <- sapply(df[, -1], as.numeric)
 
 hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
-hsp90_lm <- lm(hsp90$dN.dS_ENSG00000096384 ~  hsp90$Generation_Length, data = hsp90)
+hsp90_lm <- lm(scale(hsp90$dN.dS_ENSG00000096384) ~  scale(hsp90$Generation_Length), data = hsp90)
 summary(hsp90_lm)
 #Call:
-#  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ hsp90$Generation_Length, data = hsp90)
+#  lm(formula = scale(hsp90$dN.dS_ENSG00000096384) ~ scale(hsp90$Generation_Length), data = hsp90)
 
-#Residuals:
-#  Min        1Q    Median        3Q       Max 
-#-0.034183 -0.012535 -0.008299 -0.004468  0.104734 
 
-#Coefficients:
-#  Estimate Std. Error t value Pr(>|t|)  
-#(Intercept)             5.100e-03  7.422e-03   0.687    0.496  
-#hsp90$Generation_Length 3.923e-06  1.956e-06   2.005    0.051 .
-#---
-#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+R version 3.4.4 (2018-03-15) -- "Someone to Lean On"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
-#Residual standard error: 0.02659 on 45 degrees of freedom
-#Multiple R-squared:  0.08201,	Adjusted R-squared:  0.06161 
-#F-statistic:  4.02 on 1 and 45 DF,  p-value: 0.051
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
 
-hsp90_lm1 <- lm(hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, data = hsp90)
-summary(hsp90_lm1)
+Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Workspace loaded from ~/Desktop/HSP/Head/2Scripts/.RData]
+
+> rm(list=ls(all=TRUE))
+> df <- read.table('../../Body/2_Derived/kn.ks.genes.like.hsp.txt')
+> df[df == 'n/a'] <- NA
+> df[, -1] <- sapply(df[, -1], as.vector)
+> df[, -1] <- sapply(df[, -1], as.numeric)
+> hsp90 <- na.omit(df[,c('dN.dS_ENSG00000096384', 'Species', 'Generation_Length')])
+> hsp90_lm <- lm(scale(hsp90$dN.dS_ENSG00000096384) ~  scale(hsp90$Generation_Length), data = hsp90)
+> summary(hsp90_lm)
+
 #Call:
-#  lm(formula = hsp90$dN.dS_ENSG00000096384 ~ 0 + hsp90$Generation_Length, 
+#  lm(formula = scale(hsp90$dN.dS_ENSG00000096384) ~ scale(hsp90$Generation_Length), 
 #     data = hsp90)
 
 #Residuals:
-#  Min        1Q    Median        3Q       Max 
-#-0.039542 -0.011556 -0.005991 -0.000709  0.103559 
+#  Min      1Q  Median      3Q     Max 
+#-1.2453 -0.4566 -0.3023 -0.1628  3.8155 
 
 #Coefficients:
-#  Estimate Std. Error t value Pr(>|t|)    
-#hsp90$Generation_Length 5.069e-06  1.017e-06   4.986  9.2e-06 ***
-#  ---
+#  Estimate Std. Error t value Pr(>|t|)  
+#(Intercept)                    6.478e-17  1.413e-01   0.000    1.000  
+#scale(hsp90$Generation_Length) 2.864e-01  1.428e-01   2.005    0.051 .
+#---
 #  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-#Residual standard error: 0.02644 on 46 degrees of freedom
-#Multiple R-squared:  0.3509,	Adjusted R-squared:  0.3367 
-#F-statistic: 24.86 on 1 and 46 DF,  p-value: 9.205e-06
+#Residual standard error: 0.9687 on 45 degrees of freedom
+#Multiple R-squared:  0.08201,	Adjusted R-squared:  0.06161 
+#F-statistic:  4.02 on 1 and 45 DF,  p-value: 0.051
 
-plot(hsp90$Generation_Length, hsp90$dN.dS_ENSG00000096384, pch = 19, xlab = 'Generation Length, days', ylab = 'Kn/Ks')  
+hsp90_lm1 <- lm(scale(hsp90$dN.dS_ENSG00000096384) ~ 0 + scale(hsp90$Generation_Length), data = hsp90)
+summary(hsp90_lm1)
+#Call:
+#  lm(formula = scale(hsp90$dN.dS_ENSG00000096384) ~ 0 + scale(hsp90$Generation_Length), 
+#     data = hsp90)
+
+#Residuals:
+#  Min      1Q  Median      3Q     Max 
+#-1.2453 -0.4566 -0.3023 -0.1628  3.8155 
+
+#Coefficients:
+#  Estimate Std. Error t value Pr(>|t|)  
+#scale(hsp90$Generation_Length)   0.2864     0.1413   2.027   0.0485 *
+  ---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 0.9581 on 46 degrees of freedom
+#Multiple R-squared:  0.08201,	Adjusted R-squared:  0.06205 
+#F-statistic: 4.109 on 1 and 46 DF,  p-value: 0.04846
+
+plot(x = scale(hsp90$Generation_Length), y = scale(hsp90$dN.dS_ENSG00000096384), pch = 19, xlab = 'Generation Length, days', ylab = 'Kn/Ks')  
 abline(hsp90_lm$coefficients[1], hsp90_lm$coefficients[2])  
 abline(0, hsp90_lm1$coefficients[1], col = 'red') 
-legend(x = 6100, y = 0.13, col = c('black', 'red'), pch = c('-', '-'), legend = c('Kn/Ks ~ Generation Length', 'Kn/Ks ~ 0 + Generation Length'))
-title('')
+legend('topright', col = c('black', 'red'), pch = c('-', '-'), legend = c('Kn/Ks ~ Generation Length, R^2 = 0.082', 'Kn/Ks ~ 0 + Generation Length, R^2 = 0.082'))
+title('Linear regression of Kn/Ks vs Generation Length for HSP90AB1')
 
 library('ggplot2')
 ggplot(hsp90, aes(Generation_Length, dN.dS_ENSG00000096384))+
