@@ -9,13 +9,17 @@ All_best_var['GOE'] <- All_best_var$slope > 0
 genes <- read.table('../../Body/1_Raw/gencode.v25.annotation.gtf.Genes.Shet.pLI.FIS.RVIS.GHIS.KnKs.GC.BrainSpecificRanking.Branch', header = 1)
 cds <-  as.vector(genes[genes$GeneType == 'protein_coding', 'EnsemblId'])
 
+
+genes.like.hsp <- as.vector(read.table('../../Body/2_Derived/hsp.like.genes.pca.genes.ranged.by.distance.to.hsp.txt')[1:300,1])
+All_best_var_genes_like_hsp <- All_best_var[All_best_var$genes %in% genes.like.hsp,] #choose hsp-like genes only
+
 All_best_var
 library(stringr)
 
 All_best_var_protein_coding <- All_best_var[cds %in% All_best_var$genes]
 
 
-only_ovary <- All_best_var_protein_coding[All_best_var_protein_coding$Tissue == 'Ovary',]
+only_ovary <- All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$Tissue == 'Ovary',]
 plot(only_ovary$Assessed_Allele_Freq, only_ovary$slope, col = 'grey')
 points(only_ovary[only_ovary$hsp90, 'Assessed_Allele_Freq'], only_ovary[only_ovary$hsp90, 'slope'], col = 'red', cex = 1.5, pch = 19)
 legend('topright', legend = 'HSP90AB1', col = 'red', pch=19)
@@ -23,6 +27,16 @@ legend('topright', legend = 'HSP90AB1', col = 'red', pch=19)
 pdf('../../Body/4_Figures/Gtex.LOE.GOE.tissue.specific.slopes.assessed.allele.freq.pdf')
 for (tissue in unique(All_best_var_protein_coding$Tissue)){
   only_tis <- All_best_var_protein_coding[All_best_var_protein_coding$Tissue == tissue,]
+  plot(only_tis$Assessed_Allele_Freq, only_tis$slope, col = 'grey')
+  points(only_tis[only_tis$hsp90, 'Assessed_Allele_Freq'], only_tis[only_tis$hsp90, 'slope'], col = 'red', cex = 1.5, pch = 19)
+  legend('topright', legend = 'HSP90AB1', col = 'red', pch=19)
+  title(sprintf('Assessed allele frequency vs slope \n of cis-eQTLs in %s', tissue))
+}
+dev.off()
+
+pdf('../../Body/4_Figures/Gtex.LOE.GOE.tissue.specific.slopes.assessed.allele.freq.hsp.like.genes.pdf')
+for (tissue in unique(All_best_var_genes_like_hsp$Tissue)){
+  only_tis <- All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$Tissue == tissue,]
   plot(only_tis$Assessed_Allele_Freq, only_tis$slope, col = 'grey')
   points(only_tis[only_tis$hsp90, 'Assessed_Allele_Freq'], only_tis[only_tis$hsp90, 'slope'], col = 'red', cex = 1.5, pch = 19)
   legend('topright', legend = 'HSP90AB1', col = 'red', pch=19)
@@ -56,8 +70,6 @@ boxplot(All_best_var[All_best_var$slope < 50 & All_best_var$slope > -50, 'Assess
 
 #for genes like hsp90 from PCA
 
-genes.like.hsp <- as.vector(read.table('../../Body/2_Derived/hsp.like.genes.pca.genes.ranged.by.distance.to.hsp.txt')[1:300,1])
-All_best_var_genes_like_hsp <- All_best_var[grepl(paste(genes.like.hsp, collapse="|"), All_best_var$cis_eQTL_id),] #choose hsp-like genes only
 
 plot(All_best_var_genes_like_hsp$Assessed_Allele_Freq, All_best_var_genes_like_hsp$slope, col = 'grey')
 points(All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$hsp90, 'Assessed_Allele_Freq'], 
