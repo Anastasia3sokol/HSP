@@ -16,7 +16,7 @@ All_best_var_genes_like_hsp <- All_best_var[All_best_var$genes %in% genes.like.h
 All_best_var
 library(stringr)
 
-All_best_var_protein_coding <- All_best_var[cds %in% All_best_var$genes]
+All_best_var_protein_coding <- All_best_var[cds %in% All_best_var$genes,]
 
 
 only_ovary <- All_best_var_genes_like_hsp[All_best_var_genes_like_hsp$Tissue == 'Ovary',]
