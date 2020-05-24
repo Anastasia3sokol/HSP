@@ -1,4 +1,5 @@
 rm(list=ls(all=TRUE))
+library(ggplot2)
 
 pdf("../../Body/4_Figures/GTEx.All.sign.pairs.all.tissues.Hsp90")
 List = list.files("../../Body/1_Raw/GTEx_Analysis_v7_eQTL/")
@@ -19,8 +20,53 @@ for (i in 1:length(List))
 }
 
 write.table(All_sign_pairs,"../../Body/2_Derived/GTEx.All.sign.pairs.all.tissues.Hsp90.txt")
+
+All_sign_pairs <- read.table('../../Body/2_Derived/GTEx.All.sign.pairs.all.tissues.Hsp90.txt')
+
+
 plot(All_sign_pairs$slope,All_sign_pairs$maf)
 abline(v=0,col='red')
 summary(All_sign_pairs$slope)
 wilcox.test(All_sign_pairs$slope, mu = 0) # hehe!!
+
+theme_set(
+  theme_minimal() +
+    theme(legend.position = "right", axis.text.x = element_text(angle = 0))
+)
+ggplot(data = All_sign_pairs, aes(slope, maf, colour = Tissue))+
+  geom_point()+
+  ggtitle('cis-eQTLs of HSP90AB1')
+
+par(pin = c(6,3))
+
+
+#counts <- table(All_sign_pairs$slope >0, All_sign_pairs$Tissue)
+#barplot(counts, main="LOE and GOE cis-eQTLs of HSP90AB1",
+#        col=c("darkblue","red"), xlab = "Tissue", ylab = 'Number of cis-eQTLs',
+#        legend = c("LOE", "GOE"), beside=TRUE)
+
+All_sign_pairs$GOE <- All_sign_pairs$slope > 0
+theme_set(
+  theme_minimal() +
+    theme(legend.position = "right", axis.text.x = element_text(angle = -20, hjust = 0))
+)
+
+ggplot(data=All_sign_pairs, aes(x=Tissue, fill= GOE)) +
+  geom_histogram(stat="count", position=position_dodge())+
+  ggtitle("HSP90AB1")
+
+for (tissue in unique(All_sign_pairs$Tissue)){
+  plot(All_sign_pairs[All_sign_pairs$Tissue == tissue,]$slope,All_sign_pairs[All_sign_pairs$Tissue == tissue,]$maf,
+       main = paste('cis-eQTLs of HSP90AB1 in ', tissue))
+  
+}
+
+
 dev.off()
+
+
+
+
+
+
+
