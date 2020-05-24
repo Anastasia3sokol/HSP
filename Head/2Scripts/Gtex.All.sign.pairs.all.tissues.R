@@ -17,6 +17,8 @@ for (i in 1:length(List))
   }}
 
 
+f <- read.table('../../Body/1_Raw/GTEx_Analysis_v7_eQTL/Adipose_Subcutaneous.v7.signif_variant_gene_pairs.txt.gz', sep = '\t', header = TRUE)
+
 # to leave cis-eQTL that is outside of the gene
 #All_sign_pairs <- All_best_var[All_best_var$gene_start > All_best_var$pos | All_best_var$pos > All_best_var$gene_end, ]
 
@@ -26,7 +28,19 @@ write.csv(All_sign_pairs, gz1)
 close(gz1)
 
 
-All_sign_pairs <- read.table('../../Body/2_Derived/All.sign.pairs.all.tissues.txt')
+All_sign_pairs <- read.table('../../Body/2_Derived/All.sign.pairs.all.tissues.txt.gz')
 
+pdf("../../Body/4_Figures/All.sign.pairs.all.tissues.hsp90ab1.pdf")
 
-plot(All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "slope"], All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "maf"])
+plot(All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "slope"], All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "maf"],
+     xlab = "slope", ylab = "maf", main = 'HSP90AB1')
+
+x <- barplot(table(All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "Tissue"]), xaxt="n",
+        ylab = 'number of cis-eQTLs', main = "HSP90AB1")
+labs <- paste(names(table(All_sign_pairs[grepl("ENSG00000096384", All_sign_pairs$varian_geneid_tss), "Tissue"])), "Tissue")
+text(cex=1, x=x-.25, y=-1.25, labs, xpd=TRUE, srt=45)
+
+dev.off()
+
+All_sign_pairs[All]
+
