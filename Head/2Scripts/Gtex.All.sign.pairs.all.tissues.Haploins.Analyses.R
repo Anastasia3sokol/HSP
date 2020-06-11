@@ -36,3 +36,41 @@ autoplot(QtlPca, data = qtl, colour = 'gray', loadings = TRUE, loadings.label = 
 
 dev.off()
 
+
+
+boxplot(qtl$NumberGoeEqtl/qtl$NumberEqtl, ylab = 'Доля GOE вариантов')
+points(qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberGoeEqtl']/qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberEqtl'], col = 'red', pch = 19, cex = 1.5)
+legend('topright', legend = 'HSP90', col = 'red', pch = 19, cex = 1.5)
+
+
+
+
+boxplot(qtl$NumberLoeEqtl/qtl$NumberEqtl)
+points(qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberLoeEqtl']/qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberEqtl'], col = 'red', pch = 19, cex = 1.5)
+legend('topright', legend = 'HSP90', col = 'red', pch = 19, cex = 1.5)
+
+boxplot(qtl$NumberLoeEqtl/qtl$NumberGoeEqtl)
+points(qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberLoeEqtl']/qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberGoeEqtl'], col = 'red', pch = 19, cex = 1.5)
+legend('topright', legend = 'HSP90', col = 'red', pch = 19, cex = 1.5)
+
+boxplot(qtl$NumberEqtl, ylim = c(0, 5000))
+points(qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberEqtl'], col = 'red', pch = 19, cex = 1.5)
+legend('topright', legend = 'HSP90', col = 'red', pch = 19, cex = 1.5)
+
+
+hsp_goe_prop <- qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberGoeEqtl']/qtl[qtl$EnsemblId == 'ENSG00000096384', 'NumberEqtl']
+qtl_goe_prop <- qtl$NumberGoeEqtl/qtl$NumberEqtl
+sum(qtl_goe_prop >= hsp_goe_prop, na.rm = T)/length(qtl_goe_prop)
+
+
+hsp_like_genes = read.table('../../Body/2_Derived/hsp.like.genes.pca.genes.ranged.by.distance.to.hsp.txt')
+hsp_like_genes <- hsp_like_genes[1:300,]
+qtl_hsp_like <- qtl[(qtl$EnsemblId %in% hsp_like_genes$EnsemblId),]
+
+boxplot(qtl_hsp_like$NumberGoeEqtl/qtl_hsp_like$NumberEqtl)
+points(qtl_hsp_like[qtl_hsp_like$EnsemblId == 'ENSG00000096384', 'NumberGoeEqtl']/qtl_hsp_like[qtl_hsp_like$EnsemblId == 'ENSG00000096384', 'NumberEqtl'], col = 'red', pch = 19, cex = 1.5)
+legend('topright', legend = 'HSP90', col = 'red', pch = 19, cex = 1.5)
+
+
+
+
