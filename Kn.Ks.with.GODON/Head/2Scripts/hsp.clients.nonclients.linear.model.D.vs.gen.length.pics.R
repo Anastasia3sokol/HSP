@@ -6,15 +6,12 @@ library(ggplot2)
 clients <-  read.table('../../Body/2_Derived/clients_godon_D.txt', header = T)
 nonclients <- read.table('../../Body/2_Derived/nonclients_godon_D.txt', header = T)
 
-
-
 cols <- colnames(clients[,-c(1, 335)])
 for (c in cols) {
   if (length(clients[!is.na(clients[,c]),c]) <= 70){
     clients[,c] <- NULL
   }
 }  
-
 
 cols <- colnames(nonclients[,-c(1, 429)])
 for (c in cols) {
@@ -272,9 +269,8 @@ summary(model)
 #  Generation_Length -0.16745    0.01634 -10.249   <2e-16 ***
 #  clientTRUE         0.02787    0.01095   2.546   0.0109 *     
 
+
 ###########
-
-
 
 model <-  glm(D ~ Generation_Length + client + as.factor(gene), data = clients)
 print(summary(model))
@@ -332,9 +328,26 @@ print(summary(model))
 #as.factor(gene)D_ENSG00000047579  0.527647   0.192156   2.746 0.006035 ** 
 
 
+################################## KP
+str(clients)
+summary(clients$Generation_Length)
+table(clients$client)
+table(as.numeric(clients$client))
+summary(clients$D)
+model <- glm(D ~ Generation_Length + as.numeric(client), data = clients)
+summary(model)
 
-
-
-
+VecOfGenes = unique(clients$gene); length(VecOfGenes)
+VecOfPvalues=c()
+VecOfRho=c()
+for (i in 1:length(VecOfGenes))
+{ # i = 1
+  temp = clients[clients$gene == VecOfGenes[i],]
+  VecOfPvalues=c(VecOfPvalues,as.numeric(cor.test(temp$Generation_Length,temp$D, method = 'spearman')[3]))
+  VecOfRho=c(VecOfRho,as.numeric(cor.test(temp$Generation_Length,temp$D, method = 'spearman')[4]))
+}
+summary(VecOfRho)
+summary(VecOfPvalues)
+plot(VecOfRho,VecOfPvalues)
 
 
